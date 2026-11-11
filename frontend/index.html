@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poker Host — Развлекательный Texas Hold'em</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- LOBBY / CREATE -->
+    <div id="screen-create" class="screen">
+      <div class="card create-card">
+        <h1>🃏 Poker Host</h1>
+        <p class="subtitle">Развлекательный Texas Hold'em для Zoom</p>
+
+        <div class="form-group">
+          <label>Макс. игроков (6–10)</label>
+          <input type="number" id="maxPlayers" value="9" min="6" max="10" />
+        </div>
+
+        <div class="form-group">
+          <label>Стартовый стек</label>
+          <input type="number" id="startingStack" value="1000" step="100" />
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="useBlinds" checked />
+            Использовать блайнды
+          </label>
+        </div>
+
+        <div id="blindsSettings">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Малый блайнд</label>
+              <input type="number" id="smallBlind" value="5" />
+            </div>
+            <div class="form-group">
+              <label>Большой блайнд</label>
+              <input type="number" id="bigBlind" value="10" />
+            </div>
+          </div>
+        </div>
+
+        <button id="btnCreate" class="btn btn-primary">Создать стол</button>
+      </div>
+    </div>
+
+    <!-- MAIN HOST PANEL -->
+    <div id="screen-game" class="screen hidden">
+      <header class="topbar">
+        <div class="logo">🃏 Poker Host</div>
+        <div class="game-id">ID: <span id="gameIdDisplay"></span></div>
+        <div class="status-badge" id="statusBadge">Лобби</div>
+      </header>
+
+      <main class="layout">
+        <!-- LEFT: Table view (what you share) -->
+        <section class="table-panel">
+          <div class="table">
+            <div class="pot-display">
+              <span>Банк</span>
+              <strong id="potValue">0</strong>
+            </div>
+
+            <div class="community-cards" id="communityCards">
+              <!-- cards injected -->
+            </div>
+
+            <div class="players-row" id="playersRow">
+              <!-- player seats injected -->
+            </div>
+
+            <div class="street-label" id="streetLabel">Ожидание</div>
+          </div>
+
+          <div class="history" id="history">
+            <!-- log -->
+          </div>
+        </section>
+
+        <!-- RIGHT: Host controls -->
+        <aside class="controls">
+          <div class="panel">
+            <h3>Игроки</h3>
+            <div class="add-player">
+              <input type="text" id="newPlayerName" placeholder="Ник из Zoom" />
+              <button id="btnAddPlayer" class="btn btn-sm">+</button>
+            </div>
+            <ul id="playersList" class="players-list"></ul>
+          </div>
+
+          <div class="panel">
+            <h3>Управление раздачей</h3>
+            <button id="btnStartHand" class="btn btn-primary btn-block">Раздать карты</button>
+            <button id="btnNextHand" class="btn btn-secondary btn-block hidden">Следующая раздача</button>
+          </div>
+
+          <div class="panel" id="actionPanel">
+            <h3>Действие за игрока</h3>
+            <select id="actionPlayer"></select>
+            <div class="action-buttons">
+              <button data-action="fold" class="btn btn-danger btn-sm">Fold</button>
+              <button data-action="check" class="btn btn-sm">Check</button>
+              <button data-action="call" class="btn btn-sm">Call</button>
+              <button data-action="raise" class="btn btn-sm">Raise</button>
+              <button data-action="allin" class="btn btn-warning btn-sm">All-in</button>
+            </div>
+            <div class="raise-amount">
+              <input type="number" id="raiseAmount" placeholder="Сумма рейза" value="20" />
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Настройки</h3>
+            <label class="switch-label">
+              <input type="checkbox" id="toggleBlinds" />
+              Блайнды
+            </label>
+            <div class="form-row">
+              <input type="number" id="setSB" placeholder="SB" class="input-sm" />
+              <input type="number" id="setBB" placeholder="BB" class="input-sm" />
+            </div>
+            <button id="btnSaveSettings" class="btn btn-sm btn-block">Сохранить</button>
+          </div>
+
+          <div class="panel bot-status">
+            <h3>Бот Zoom</h3>
+            <div id="botStatus" class="status-offline">Не подключён</div>
+            <p class="hint">Бот подключается отдельно и присылает карты в личку Zoom</p>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
